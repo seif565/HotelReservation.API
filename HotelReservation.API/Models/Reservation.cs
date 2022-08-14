@@ -1,4 +1,6 @@
-﻿namespace HotelReservation.API.Models
+﻿using System.Web.Http;
+using System.Linq;
+namespace HotelReservation.API.Models
 {
     public class Reservation
     {
@@ -6,13 +8,23 @@
         private int days;
         public Guid Id { get { return id; } private set { id = Guid.NewGuid(); } }
         public string Name { get; set; }        
+
+        public Room Room { get; set; }
         public DateTime ReservationStart { get; set; }
         public DateTime ReservationEnd { get; set; }        
         // Days Are accurately calculated but can still be edited by end user.
-        public int Days {  set { days = ReservationEnd.Subtract(ReservationStart).Days; } get { return days; } }
-        private int price;
+        public double Days {  set { days = ReservationEnd.Subtract(ReservationStart).Days; } get { return days; } }
+        private double price;
         public double Price { get { return price; } set { price = Days * 5; } }
 
+        public double SetPrice(RoomType roomType)
+        {
+            if(!roomType.roomPrice.ContainsKey(roomType.RoomKind))
+            {
+                throw new ArgumentException("value not found in dictionary");
+            }
+            return price * roomType.roomPrice[roomType.RoomKind];
+        }
         
         //private void SetDays()
         //{

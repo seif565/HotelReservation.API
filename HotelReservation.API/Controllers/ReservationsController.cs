@@ -88,7 +88,7 @@ namespace HotelReservation.API.Controllers
           if (_context.Reservations == null)
           {
               return Problem("Entity set 'HotelDBContext.Reservations'  is null.");
-          }            
+          }           
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
 

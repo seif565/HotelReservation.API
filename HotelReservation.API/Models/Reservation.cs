@@ -15,7 +15,7 @@ namespace HotelReservation.API.Models
         // Days Are accurately calculated but can still be edited by end user.
         public double Days {  set { days = ReservationEnd.Subtract(ReservationStart).Days; } get { return days; } }
         private double price;
-        public double Price { get { return price; } set { price = Days * 5; } }
+        public double Price { get { return price; } set { price = Days * Room.RoomType.PricePerDay; } }
 
         public double SetPrice(RoomType roomType)
         {

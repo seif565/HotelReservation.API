@@ -13,19 +13,8 @@ namespace HotelReservation.API.Models
         public DateTime ReservationStart { get; set; }
         public DateTime ReservationEnd { get; set; }        
         // Days Are accurately calculated but can still be edited by end user.
-        public double Days {  set { days = ReservationEnd.Subtract(ReservationStart).Days; } get { return days; } }
-        private double price;
-        public double Price { get { return price; } set { price = Days * Room.RoomType.PricePerDay; } }
-
-        public double SetPrice(RoomType roomType)
-        {
-            if(!roomType.roomPrice.ContainsKey(roomType.RoomKind))
-            {
-                throw new ArgumentException("value not found in dictionary");
-            }
-            return price * roomType.roomPrice[roomType.RoomKind];
-        }
-        
+        public double Days { get; internal set; }        
+        public double Price { get; internal set; }        
         //private void SetDays()
         //{
 

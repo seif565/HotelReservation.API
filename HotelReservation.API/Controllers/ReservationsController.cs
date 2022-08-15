@@ -88,7 +88,10 @@ namespace HotelReservation.API.Controllers
           if (_context.Reservations == null)
           {
               return Problem("Entity set 'HotelDBContext.Reservations'  is null.");
-          }           
+          }
+            reservation.Room.RoomType.PricePerDay = reservation.Room.RoomType.roomPrice[reservation.Room.RoomType.RoomKind];
+            reservation.Days = reservation.ReservationEnd.Subtract(reservation.ReservationStart).Days;
+            reservation.Price = reservation.Room.RoomType.PricePerDay * reservation.Days;
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
 

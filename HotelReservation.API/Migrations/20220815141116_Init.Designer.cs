@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelReservation.API.Migrations
 {
     [DbContext(typeof(HotelDBContext))]
-    [Migration("20220813193319_PrivateID")]
-    partial class PrivateID
+    [Migration("20220815141116_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,8 +30,8 @@ namespace HotelReservation.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Days")
-                        .HasColumnType("int");
+                    b.Property<double>("Days")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -46,19 +46,23 @@ namespace HotelReservation.API.Migrations
                     b.Property<DateTime>("ReservationStart")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("HotelReservation.API.Models.Room", b =>
                 {
-                    b.Property<Guid>("RoomId")
+                    b.Property<int>("RoomId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<double>("PricePerDay")
-                        .HasColumnType("float");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"), 1L, 1);
 
                     b.Property<bool>("Reserved")
                         .HasColumnType("bit");
@@ -67,23 +71,30 @@ namespace HotelReservation.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RoomTypeTypeId")
+                        .HasColumnType("int");
 
                     b.HasKey("RoomId");
+
+                    b.HasIndex("RoomTypeTypeId");
 
                     b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("HotelReservation.API.Models.RoomType", b =>
                 {
-                    b.Property<Guid>("TypeId")
+                    b.Property<int>("TypeId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TypeId"), 1L, 1);
 
                     b.Property<double>("PricePerDay")
                         .HasColumnType("float");
+
+                    b.Property<string>("RoomKind")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoomNumber")
                         .HasColumnType("int");
@@ -91,6 +102,28 @@ namespace HotelReservation.API.Migrations
                     b.HasKey("TypeId");
 
                     b.ToTable("RoomType");
+                });
+
+            modelBuilder.Entity("HotelReservation.API.Models.Reservation", b =>
+                {
+                    b.HasOne("HotelReservation.API.Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("HotelReservation.API.Models.Room", b =>
+                {
+                    b.HasOne("HotelReservation.API.Models.RoomType", "RoomType")
+                        .WithMany()
+                        .HasForeignKey("RoomTypeTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RoomType");
                 });
 #pragma warning restore 612, 618
         }

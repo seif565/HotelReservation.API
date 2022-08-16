@@ -53,12 +53,11 @@ namespace HotelReservation.API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoomType(int id, RoomType roomType)
-        {
+        {            
             if (id != roomType.TypeId)
             {
                 return BadRequest();
             }
-
             _context.Entry(roomType).State = EntityState.Modified;
 
             try
@@ -88,7 +87,9 @@ namespace HotelReservation.API.Controllers
           if (_context.RoomType == null)
           {
               return Problem("Entity set 'HotelDBContext.RoomType'  is null.");
-          }
+          }          
+            roomType.RoomKind = roomType.RoomKind.ToUpper();
+            roomType.PricePerDay = roomType.roomPrice[roomType.RoomKind];
             _context.RoomType.Add(roomType);
             await _context.SaveChangesAsync();
 

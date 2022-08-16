@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelReservation.API.Migrations
 {
     [DbContext(typeof(HotelDBContext))]
-    [Migration("20220815141116_Init")]
-    partial class Init
+    [Migration("20220816001054_InitMigration")]
+    partial class InitMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -67,16 +67,13 @@ namespace HotelReservation.API.Migrations
                     b.Property<bool>("Reserved")
                         .HasColumnType("bit");
 
-                    b.Property<string>("RoomNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RoomNumber")
+                        .HasColumnType("int");
 
-                    b.Property<int>("RoomTypeTypeId")
+                    b.Property<int>("RoomTypeID")
                         .HasColumnType("int");
 
                     b.HasKey("RoomId");
-
-                    b.HasIndex("RoomTypeTypeId");
 
                     b.ToTable("Rooms");
                 });
@@ -96,9 +93,6 @@ namespace HotelReservation.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoomNumber")
-                        .HasColumnType("int");
-
                     b.HasKey("TypeId");
 
                     b.ToTable("RoomType");
@@ -113,17 +107,6 @@ namespace HotelReservation.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Room");
-                });
-
-            modelBuilder.Entity("HotelReservation.API.Models.Room", b =>
-                {
-                    b.HasOne("HotelReservation.API.Models.RoomType", "RoomType")
-                        .WithMany()
-                        .HasForeignKey("RoomTypeTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RoomType");
                 });
 #pragma warning restore 612, 618
         }

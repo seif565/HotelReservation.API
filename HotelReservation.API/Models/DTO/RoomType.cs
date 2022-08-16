@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HotelReservation.API.Models
+﻿namespace HotelReservation.API.Models.DTO
 {
     public class RoomType
     {
-        [Key]
-        public int TypeId { get; internal set; }        
+        public int TypeId { get; internal set; }
         public double PricePerDay { get; internal set; }
         public string RoomKind { get; set; }
         public readonly Dictionary<string, double> roomPrice = new()

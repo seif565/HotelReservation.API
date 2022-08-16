@@ -4,6 +4,10 @@ namespace HotelReservation.API.Models
 {
     public class HotelDBContext : DbContext
     {
+        public HotelDBContext()
+        {
+        }
+
         public HotelDBContext(DbContextOptions<HotelDBContext> options) : base(options)
         {            
 

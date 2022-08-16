@@ -68,12 +68,10 @@ namespace HotelReservation.API.Migrations
                     b.Property<int>("RoomNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoomTypeTypeId")
+                    b.Property<int>("RoomTypeID")
                         .HasColumnType("int");
 
                     b.HasKey("RoomId");
-
-                    b.HasIndex("RoomTypeTypeId");
 
                     b.ToTable("Rooms");
                 });
@@ -107,17 +105,6 @@ namespace HotelReservation.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Room");
-                });
-
-            modelBuilder.Entity("HotelReservation.API.Models.Room", b =>
-                {
-                    b.HasOne("HotelReservation.API.Models.RoomType", "RoomType")
-                        .WithMany()
-                        .HasForeignKey("RoomTypeTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RoomType");
                 });
 #pragma warning restore 612, 618
         }

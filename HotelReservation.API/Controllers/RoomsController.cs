@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using HotelReservation.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HotelReservation.API.Models;
 
 namespace HotelReservation.API.Controllers
 {
@@ -24,10 +19,10 @@ namespace HotelReservation.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
-          if (_context.Rooms == null)
-          {
-              return NotFound();
-          }
+            if (_context.Rooms == null)
+            {
+                return NotFound();
+            }
             return await _context.Rooms.ToListAsync();
         }
 
@@ -35,10 +30,10 @@ namespace HotelReservation.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Room>> GetRoom(int id)
         {
-          if (_context.Rooms == null)
-          {
-              return NotFound();
-          }
+            if (_context.Rooms == null)
+            {
+                return NotFound();
+            }
             var room = await _context.Rooms.FindAsync(id);
 
             if (room == null)
@@ -84,12 +79,14 @@ namespace HotelReservation.API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Room>> PostRoom(Room room)
-        {
-          if (_context.Rooms == null)
-          {
-              return Problem("Entity set 'HotelDBContext.Rooms'  is null.");
-          }
-            room.RoomType.PricePerDay = room.RoomType.roomPrice[room.RoomType.RoomKind];
+        {            
+            if (_context.Rooms == null)
+            {
+                return Problem("Entity set 'HotelDBContext.Rooms'  is null.");
+            }
+            RoomType designatedRoomType = _context.RoomType.Find(room.RoomTypeID);
+            room.RoomType = designatedRoomType;
+            room.RoomType.PricePerDay = room.RoomType.roomPrice[room.RoomType.RoomKind.ToUpper()];
             _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
 

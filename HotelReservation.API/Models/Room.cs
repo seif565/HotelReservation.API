@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace HotelReservation.API.Models
 {
     public class Room
-    {        
-        public int RoomId { get; private set; }  
-        private RoomType roomType;
-        public RoomType RoomType { get; set; }
+    {                
+        [Key]
+        public int RoomId { get; private set; }
+        public int RoomTypeID { get; set; }
+        internal RoomType RoomType { get; set; }
         public int RoomNumber { get; set; }
-        public bool Reserved { get; set; }           
+        public bool Reserved { get; set; }
     }
 }

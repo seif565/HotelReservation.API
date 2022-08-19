@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace HotelReservation.API.Models
 {
     public class RoomType
     {
-        [Key]
-        public int TypeId { get; internal set; }        
+        [Key]        
+        public int TypeId { get; private set; }        
         public double PricePerDay { get; internal set; }
         public string RoomKind { get; set; }
         public readonly Dictionary<string, double> roomPrice = new()
@@ -16,5 +17,10 @@ namespace HotelReservation.API.Models
             { "VILLA", 400 }
         };
         public string[] type = { "SUPERIOR ROOM", "SUITE", "FAMILY ROOM", "VILLA" };
+
+        public static implicit operator RoomType(ActionResult<RoomType> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

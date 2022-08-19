@@ -6,10 +6,10 @@ namespace HotelReservation.API.Models
     {
         private Guid id;
         private int days;
-        public Guid Id { get { return id; } private set { id = Guid.NewGuid(); } }
+        public Guid Id { get { return id; } internal set { id = Guid.NewGuid(); } }
         public string Name { get; set; }        
 
-        public Room Room { get; set; }
+        public int RoomId { get; set; }
         public DateTime ReservationStart { get; set; }
         public DateTime ReservationEnd { get; set; }        
         // Days Are accurately calculated but can still be edited by end user.

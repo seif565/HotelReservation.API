@@ -9,6 +9,6 @@ namespace HotelReservation.API.Models
         public int RoomTypeID { get; set; }
         internal RoomType RoomType { get; set; }
         public int RoomNumber { get; set; }
-        public bool Reserved { get; set; }
+        public bool Reserved { get; set; }        
     }
 }

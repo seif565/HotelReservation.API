@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using HotelReservation.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HotelReservation.API.Models;
 
 namespace HotelReservation.API.Controllers
 {
@@ -24,10 +19,10 @@ namespace HotelReservation.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
         {
-          if (_context.Reservations == null)
-          {
-              return NotFound();
-          }
+            if (_context.Reservations == null)
+            {
+                return NotFound();
+            }
             return await _context.Reservations.ToListAsync();
         }
 
@@ -35,10 +30,10 @@ namespace HotelReservation.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Reservation>> GetReservation(Guid id)
         {
-          if (_context.Reservations == null)
-          {
-              return NotFound();
-          }
+            if (_context.Reservations == null)
+            {
+                return NotFound();
+            }
             var reservation = await _context.Reservations.FindAsync(id);
 
             if (reservation == null)
@@ -49,16 +44,15 @@ namespace HotelReservation.API.Controllers
             return reservation;
         }
 
-        // PUT: api/Reservations/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT: api/Reservations/5        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservation(Guid id, Reservation reservation)
-        {
+        {                        
+            reservation.Id = id;
             if (id != reservation.Id)
             {
                 return BadRequest();
             }
-
             _context.Entry(reservation).State = EntityState.Modified;
 
             try
@@ -80,22 +74,32 @@ namespace HotelReservation.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Reservations
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST: api/Reservations        
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {
-          if (_context.Reservations == null)
-          {
-              return Problem("Entity set 'HotelDBContext.Reservations'  is null.");
-          }
-            reservation.Room.RoomType.PricePerDay = reservation.Room.RoomType.roomPrice[reservation.Room.RoomType.RoomKind];
-            reservation.Days = reservation.ReservationEnd.Subtract(reservation.ReservationStart).Days;
-            reservation.Price = reservation.Room.RoomType.PricePerDay * reservation.Days;
+            if (_context.Reservations == null)
+            {
+                return Problem("Entity set 'HotelDBContext.Reservations'  is null.");
+            }
+            SetReservationData(reservation);            
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
+        }
+
+        private void SetReservationData(Reservation reservation)
+        {
+            Room room = _context.Rooms.Find(reservation.RoomId);
+            if (!room.Reserved)
+            {
+                room.Reserved = true;
+            }            
+            RoomType roomType = _context.RoomType.Find(room.RoomTypeID);
+            double pricePerDay = roomType.roomPrice[roomType.RoomKind];
+            reservation.Days = (reservation.ReservationEnd - reservation.ReservationStart).Days;
+            reservation.Price = reservation.Days * pricePerDay;
         }
 
         // DELETE: api/Reservations/5

@@ -15,7 +15,7 @@ namespace HotelReservation.API.Controllers
             _context = context;
         }
 
-        // GET: api/Rooms
+        //GET: api/Rooms
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
@@ -24,6 +24,25 @@ namespace HotelReservation.API.Controllers
                 return NotFound();
             }
             return await _context.Rooms.ToListAsync();
+        }
+        [HttpGet("Date")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetRosoms(DateTime date)
+        {
+            if (_context.Rooms == null)
+            {
+                return NotFound();
+            }
+            var rooms = _context.Reservations.Where(x=>x.ReservationEnd> date && x.ReservationStart < date).ToList();            
+            return Ok(rooms);
+        }
+        [HttpGet("Available")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetAvailableRooms()
+        {
+            if (_context.Rooms == null)
+            {
+                return NotFound();
+            }
+            return await _context.Rooms.Where(x => x.Reserved == false).ToListAsync();
         }
 
         // GET: api/Rooms/5
@@ -43,6 +62,7 @@ namespace HotelReservation.API.Controllers
 
             return room;
         }
+
 
         // PUT: api/Rooms/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -79,7 +99,7 @@ namespace HotelReservation.API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Room>> PostRoom(Room room)
-        {            
+        {
             if (_context.Rooms == null)
             {
                 return Problem("Entity set 'HotelDBContext.Rooms'  is null.");

@@ -53,11 +53,12 @@ namespace HotelReservation.API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoomType(int id, RoomType roomType)
-        {            
-            if (id != roomType.TypeId)
+        {
+            roomType = await _context.RoomType.FindAsync(id);
+            if (!_context.RoomType.Any(o => o.TypeId == id))
             {
                 return BadRequest();
-            }
+            }            
             _context.Entry(roomType).State = EntityState.Modified;
 
             try

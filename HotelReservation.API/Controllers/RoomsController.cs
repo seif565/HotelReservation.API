@@ -1,4 +1,5 @@
 ﻿using HotelReservation.API.Models;
+using HotelReservation.API.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,32 +18,28 @@ namespace HotelReservation.API.Controllers
 
         //GET: api/Rooms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
+        public async Task<ActionResult<IEnumerable<Room>>> GetRooms([FromQuery] GetRoomsDTO input)
         {
             if (_context.Rooms == null)
             {
                 return NotFound();
             }
-            return await _context.Rooms.ToListAsync();
-        }
-        [HttpGet("Date")]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRosoms(DateTime date)
-        {
-            if (_context.Rooms == null)
+            var query = _context.Reservations.AsQueryable();
+            if (input.fromDate != null)
             {
-                return NotFound();
+                query = query.Where(x => x.ReservationStart <= input.fromDate
+                && x.ReservationEnd > input.fromDate);
             }
-            var rooms = _context.Reservations.Where(x=>x.ReservationEnd> date && x.ReservationStart < date).ToList();            
-            return Ok(rooms);
-        }
-        [HttpGet("Available")]
-        public async Task<ActionResult<IEnumerable<Room>>> GetAvailableRooms()
-        {
-            if (_context.Rooms == null)
+            if (input.toDate != null)
             {
-                return NotFound();
+                query = query.Where(x => x.ReservationStart <= input.toDate
+                && x.ReservationEnd > input.toDate);
             }
-            return await _context.Rooms.Where(x => x.Reserved == false).ToListAsync();
+            var rooms = from reservation in query
+                        join room in _context.Rooms.AsQueryable() on reservation.RoomId equals room.RoomId
+                        select room;
+
+            return await rooms.ToListAsync();
         }
 
         // GET: api/Rooms/5
@@ -69,6 +66,7 @@ namespace HotelReservation.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoom(int id, Room room)
         {
+            room.RoomId = id;
             if (id != room.RoomId)
             {
                 return BadRequest();
@@ -100,6 +98,7 @@ namespace HotelReservation.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Room>> PostRoom(Room room)
         {
+            // Vaidation for reservations
             if (_context.Rooms == null)
             {
                 return Problem("Entity set 'HotelDBContext.Rooms'  is null.");
@@ -117,6 +116,11 @@ namespace HotelReservation.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoom(int id)
         {
+            // validate that room is not reserved             
+            if (_context.Rooms.Any(x => x.Reserved && x.RoomId == id))
+            {
+                return Problem("Room Reserved");
+            }
             if (_context.Rooms == null)
             {
                 return NotFound();

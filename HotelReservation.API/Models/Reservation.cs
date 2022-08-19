@@ -6,7 +6,7 @@ namespace HotelReservation.API.Models
     {
         private Guid id;
         private int days;
-        public Guid Id { get { return id; } internal set { id = Guid.NewGuid(); } }
+        public Guid Id { get; set; }
         public string Name { get; set; }        
 
         public int RoomId { get; set; }

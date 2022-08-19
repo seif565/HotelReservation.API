@@ -53,6 +53,7 @@ namespace HotelReservation.API.Controllers
             {
                 return BadRequest();
             }
+            SetReservationData(reservation);
             _context.Entry(reservation).State = EntityState.Modified;
 
             try

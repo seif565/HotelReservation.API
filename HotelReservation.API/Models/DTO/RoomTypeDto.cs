@@ -1,6 +1,6 @@
 ﻿namespace HotelReservation.API.Models.DTO
 {
-    public class RoomType
+    public class RoomTypeDto
     {
         public int TypeId { get; internal set; }
         public double PricePerDay { get; internal set; }
